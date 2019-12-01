@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script>
+      
+      const GR_URL = ""; // グラフ画像のURL(グラフ画像を表示させたければ記入)
+      
+      function sendist(){ 
+        try{
+          var rem = ElmId("rem").value;
+          
+          google.script.run.withSuccessHandler(callbkOfRg).addCount(rem);
+          
+          ElmId("count").innerHTML = ElmId("count").innerHTML-0+1;
+        
+          function callbkOfRg(data){  
+            
+            if(data == -1){
+              alert("正常に処理できませんでした．再実行してください．");
+              ElmId("count").innerHTML = ElmId("count").innerHTML-1;
+              return -1;
+            }
+          
+            ElmId("count").innerHTML = data;
+          }
+        }catch(e){
+          alert(e);
+        }        
+      }
+      
+      
+      function showCurCnt(){ 
+        try{
+          google.script.run.withSuccessHandler(callbkOfSC).getCount();
+          
+          function callbkOfSC(data){  
+            
+            if(data == -1){
+              console("scc err");
+              return -1;
+            }
+          
+            ElmId("count").innerHTML = data;
+            
+            console.log(data);
+          }
+          
+          ElmId("gr").src = "about:blank";        
+          setTimeout(()=>{ElmId("gr").src = GR_URL},500);
+        }catch(e){
+          console.log(e);
+        }        
+      }
+      
+      function ElmId(id){
+        return document.getElementById(id); 
+      };
+      
+      
+      function jumpToElmByEnter(elm){
+        if(window.event.keyCode==13)elm.focus();
+      }
+      
+      
+      window.onload = showCurCnt;
+      setInterval(showCurCnt, 1 * 60 * 1000);
+
+      
+    </script>
+    <base target="_top">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+    <style>
+      label{
+        display:    block;
+        width:      100%;
+        max-width:  100vw;
+        text-align: center;
+        margin: .5em auto -0.1em auto;
+      }
+      input{
+        display:block;
+        width:  12em;
+        margin: 0 auto .5em auto;
+      }
+      .info{
+        font-size:3em;
+      }
+      input:disabled{
+        background:#AAA;
+      }
+      #sendist,#picSelect{
+        display: none;
+      }
+      section{
+        display:    block;
+        width:      100%;
+        max-width:  100vw;
+        text-align: center;
+      }
+    </style>
+    
+  </head>
+  <body>
+    <section>
+      <div class="info">
+        cnt 計 : <span id="count">-</span> 件
+      </div>
+
+      <label>備考</label>
+      <input id="rem" type="text"
+      onkeydown="jumpToElmByEnter(ElmId('send'));">
+      <hr>
+      <input id="send" type="button" value="cnt++;" onclick="sendist();">
+      <img id="gr" 
+      style="width:100%;max-width:640px;">
+    </section>
+  </body>
+</html>
+
+
