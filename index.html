@@ -52,6 +52,10 @@
       
       function showCurCnt(){ 
         try{
+          if(sendingCnt > 0){
+            console.log("skip sync due to sending: " + sendingCnt);
+            return 0;
+          }
           ElmId("syncState").innerHTML = "同期中・・・";
           google.script.run.withSuccessHandler(callbkOfSC).getCount();
           
