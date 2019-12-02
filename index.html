@@ -8,7 +8,7 @@
       
       function sendist(){
         try{
-          ElmId("syncState").innerHTML = "同期中・・・";
+          showSyncing();
           ElmId("count").innerHTML = ElmId("count").innerHTML-0+1;
           
           setTimeout(sendAddRq, sendingCnt * 500);
@@ -38,7 +38,7 @@
             if(sendingCnt == 0){
               if((ElmId("count").innerHTML-0) <= data){
                 ElmId("count").innerHTML = data;
-                ElmId("syncState").innerHTML = "同期OK";
+                showSynced();
               }else{
                 sendAddRq();
                 sendingCnt -= (-1);
@@ -57,7 +57,7 @@
             console.log("skip sync due to sending: " + sendingCnt);
             return 0;
           }
-          ElmId("syncState").innerHTML = "同期中・・・";
+          showSyncing();
           google.script.run.withSuccessHandler(callbkOfSC).getCount();
           
           function callbkOfSC(data){  
@@ -68,7 +68,7 @@
             }
           
             ElmId("count").innerHTML = data;
-            ElmId("syncState").innerHTML = "同期OK";
+            showSynced();
             console.log(data);
           }
           
@@ -93,6 +93,16 @@
       
       window.onload = showCurCnt;
       setInterval(showCurCnt, 1 * 60 * 1000);
+      
+      function showSyncing(){
+        ElmId("syncState").innerHTML = "同期中...";
+        ElmId("rem").disabled = true;
+      }
+      
+      function showSynced(){
+        ElmId("syncState").innerHTML = "同期OK";
+        ElmId("rem").disabled = false;
+      }
 
       
     </script>
