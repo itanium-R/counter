@@ -4,15 +4,27 @@
     <script>
       
       const GR_URL = ""; // グラフ画像のURL(グラフ画像を表示させたければ記入)
+      var   sendingCnt = 0;
       
-      function sendist(){ 
+      function sendist(){
+        try{
+          ElmId("syncState").innerHTML = "同期中・・・";
+          ElmId("count").innerHTML = ElmId("count").innerHTML-0+1;
+          
+          setTimeout(sendAddRq, sendingCnt * 500);
+          sendingCnt -= (-1);
+          console.log("[sendingCnt]" + sendingCnt);
+            
+        }catch(e){
+          alert(e);
+        }
+      }
+      
+      function sendAddRq(){ 
         try{
           var rem = ElmId("rem").value;
           
           google.script.run.withSuccessHandler(callbkOfRg).addCount(rem);
-          
-          ElmId("count").innerHTML = ElmId("count").innerHTML-0+1;
-        
           function callbkOfRg(data){  
             
             if(data == -1){
@@ -20,8 +32,17 @@
               ElmId("count").innerHTML = ElmId("count").innerHTML-1;
               return -1;
             }
-          
-            ElmId("count").innerHTML = data;
+            
+            sendingCnt -= 1;
+            if(sendingCnt == 0){
+              if((ElmId("count").innerHTML-0) <= data){
+                ElmId("count").innerHTML = data;
+                ElmId("syncState").innerHTML = "同期OK";
+              }else{
+                sendAddRq();
+                sendingCnt -= (-1);
+              }
+            }
           }
         }catch(e){
           alert(e);
@@ -31,6 +52,7 @@
       
       function showCurCnt(){ 
         try{
+          ElmId("syncState").innerHTML = "同期中・・・";
           google.script.run.withSuccessHandler(callbkOfSC).getCount();
           
           function callbkOfSC(data){  
@@ -41,12 +63,14 @@
             }
           
             ElmId("count").innerHTML = data;
-            
+            ElmId("syncState").innerHTML = "同期OK";
             console.log(data);
           }
           
-          ElmId("gr").src = "about:blank";        
-          setTimeout(()=>{ElmId("gr").src = GR_URL},500);
+          if(GR_URL){
+            ElmId("gr").src = "";        
+            setTimeout(()=>{ElmId("gr").src = GR_URL + "&" + (new Date().getMinutes())},500);
+          }
         }catch(e){
           console.log(e);
         }        
@@ -82,14 +106,8 @@
         width:  12em;
         margin: 0 auto .5em auto;
       }
-      .info{
-        font-size:3em;
-      }
       input:disabled{
         background:#AAA;
-      }
-      #sendist,#picSelect{
-        display: none;
       }
       section{
         display:    block;
@@ -97,13 +115,26 @@
         max-width:  100vw;
         text-align: center;
       }
+      .info{
+        font-size:1em;
+      }
+      #count{
+        font-size:3em;
+      }
+      #syncState{
+        font-size:.8em;
+      }
     </style>
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     
   </head>
   <body>
     <section>
       <div class="info">
-        cnt 計 : <span id="count">-</span> 件
+        cnt 計 : <span id="count">-</span> 件<br>
+        <span id="syncState">同期中・・・</span>
       </div>
 
       <label>備考</label>
