@@ -5,12 +5,12 @@
       
       var sendingCnt = 0;
       
-      function sendist(){
+      function sendist(addsLocalCnt = true){
         try{
           showSyncing();
-          ElmId("count").innerHTML = ElmId("count").innerHTML-0+1;
+          if(addsLocalCnt) ElmId("count").innerHTML = ElmId("count").innerHTML-0+1;
           
-          setTimeout(sendAddRq, sendingCnt * 100);
+          setTimeout(sendAddRq, sendingCnt * 500);
           sendingCnt -= (-1);
           console.log("[sendingCnt]" + sendingCnt);
             
@@ -39,8 +39,8 @@
                 ElmId("count").innerHTML = data;
                 showSynced();
               }else{
-                sendAddRq();
-                sendingCnt -= (-1);
+                console.log("lost : "+(ElmId("count").innerHTML - data))
+                for(let i = (ElmId("count").innerHTML - data); i > 0; i-=1) sendist(false);
               }
             }
           }
