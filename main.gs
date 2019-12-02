@@ -48,3 +48,10 @@ function openShtByName(name){
     return -1;
   }
 }
+
+function getChartBlob(){
+  var sht = openShtByName("gr");
+  // そのシートにある全てのグラフを取得
+  var chart = sht.getCharts()[0];
+  return (Utilities.base64Encode((chart.getBlob().getBytes())));
+}

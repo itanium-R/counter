@@ -3,15 +3,14 @@
   <head>
     <script>
       
-      const GR_URL = ""; // グラフ画像のURL(グラフ画像を表示させたければ記入)
-      var   sendingCnt = 0;
+      var sendingCnt = 0;
       
       function sendist(){
         try{
           showSyncing();
           ElmId("count").innerHTML = ElmId("count").innerHTML-0+1;
           
-          setTimeout(sendAddRq, sendingCnt * 500);
+          setTimeout(sendAddRq, sendingCnt * 100);
           sendingCnt -= (-1);
           console.log("[sendingCnt]" + sendingCnt);
             
@@ -72,10 +71,12 @@
             console.log(data);
           }
           
-          if(GR_URL){
-            ElmId("gr").src = "";        
-            setTimeout(()=>{ElmId("gr").src = GR_URL + "&" + (new Date().getMinutes())},500);
+          google.script.run.withSuccessHandler(callbkOfSI).getChartBlob();
+          
+          function callbkOfSI(data){  
+            ElmId("gr").src = "data:image/png;base64," + data;
           }
+          
         }catch(e){
           console.log(e);
         }        
