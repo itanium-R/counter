@@ -4,9 +4,7 @@ function addCount(rem) {
     const sheet = openShtByName("cnt");
     var rows  = sheet.getLastRow()+1;
     
-    sheet.getRange(rows,1).setValue(new Date());
-    sheet.getRange(rows,2).setValue(rows-1);
-    sheet.getRange(rows,3).setValue(rem);
+    sheet.getRange(rows,1,1,3).setValues([[new Date(),rows-1,rem]]);
     
     return (rows-1);
   }catch(e){
